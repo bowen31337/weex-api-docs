@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WEEX Futures Trading API Documentation - Comprehensive endpoints for cryptocurrency derivatives trading">
+    <meta name="keywords" content="WEEX, API, Futures, Trading, Cryptocurrency, Documentation">
+    <title>WEEX Futures Trading API Documentation</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://www.weex.com/favicon.ico">
+    <!-- Import CryptoJS for HMAC SHA256 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <style>
+        /* Quick Info Banner */
+        .info-banner {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #0d1f35 0%, #12243e 100%);
+            border-bottom: 1px solid #1e3a5a;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-banner .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 214, 124, 0.1);
+            border: 1px solid rgba(0, 214, 124, 0.3);
+            border-radius: 20px;
+            color: #00d67c;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .info-banner .badge svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        
+        .info-banner .auth-info {
+            color: #b0b8c3;
+            font-size: 14px;
+        }
+        
+        .info-banner .auth-info strong {
+            color: #fff;
+        }
+        
+        /* Footer */
+        .api-footer {
+            background: #05101e;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #1e3a5a;
+            color: #6c757d;
+            font-size: 13px;
+        }
+        
+        .api-footer a {
+            color: #00d67c;
+            text-decoration: none;
+        }
+        
+        .api-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #00d67c;
+            color: #05101e;
+            padding: 8px 16px;
+            z-index: 100;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .info-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#swagger-ui" class="skip-link">Skip to API Documentation</a>
+    
+    <header class="weex-header">
+        <a href="#" class="weex-logo">
+            <span>WEEX</span> API Docs
+        </a>
+        <nav class="header-links" aria-label="Main navigation">
+            <a href="https://www.weex.com" target="_blank" rel="noopener noreferrer">WEEX Official</a>
+            <a href="https://www.weex.com/help" target="_blank" rel="noopener noreferrer">Support Center</a>
+            <a href="./CHANGELOG.md" target="_blank">Changelog</a>
+            <a href="./openapi.json" download="weex-openapi.json">Download JSON</a>
+        </nav>
+    </header>
+
+    <!-- Quick Info Banner -->
+    <div class="info-banner">
+        <div class="badge">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            API Version 2.0
+        </div>
+        <div class="badge">
+            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+            HMAC-SHA256 Auth
+        </div>
+        <div class="auth-info">
+            <strong>🔐 How to Use:</strong> 
+            Click "Authorize" → Enter your API Key, Secret, and Passphrase → Signatures auto-generated
+        </div>
+    </div>
+
+    <main id="swagger-ui" role="main"></main>
+
+    <footer class="api-footer">
+        <p>© 2024 WEEX. All rights reserved. | 
+            <a href="https://www.weex.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> | 
+            <a href="https://www.weex.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        </p>
+        <p>Base URL: <code>https://api-contract.weex.com</code></p>
+    </footer>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js" crossorigin></script>
+    <script>
+        window.onload = () => {
+            window.ui = SwaggerUIBundle({
+                url: './weex-api-spec.yaml',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                
+                // Enhanced configuration
+                docExpansion: 'none',           // Collapse all by default
+                defaultModelsExpandDepth: 2,    // Show model details
+                defaultModelExpandDepth: 2,     // Expand nested models
+                displayRequestDuration: true,   // Show request timing
+                filter: true,                   // Enable search filter
+                showExtensions: true,           // Show vendor extensions
+                showCommonExtensions: true,     // Show common extensions
+                tryItOutEnabled: false,         // Disable try-it-out by default (user can enable)
+                persistAuthorization: true,     // Remember auth between page loads
+                
+                // Syntax highlighting
+                syntaxHighlight: {
+                    activate: true,
+                    theme: 'agate'
+                },
+                
+                // Request interceptor for signature generation
+                requestInterceptor: (request) => {
+                    // Check if the request is destined for the WEEX API
+                    if (request.url.includes('weex.com') || request.url.includes('api-contract')) {
+                        const timestamp = Date.now().toString();
+                        request.headers['ACCESS-TIMESTAMP'] = timestamp;
+                        
+                        // Ensure Content-Type is set
+                        if (!request.headers['Content-Type']) {
+                            request.headers['Content-Type'] = 'application/json';
+                        }
+                        
+                        // Default locale
+                        if (!request.headers['locale']) {
+                            request.headers['locale'] = 'en-US';
+                        }
+
+                        // Signature Generation Logic
+                        if (request.headers['ACCESS-SIGN']) {
+                            try {
+                                const secretKey = request.headers['ACCESS-SIGN'];
+                                const method = request.method.toUpperCase();
+                                const urlObj = new URL(request.url);
+                                const path = urlObj.pathname;
+                                const body = request.body || '';
+                                
+                                // Build message: timestamp + method + path + body
+                                const message = timestamp + method + path + body;
+                                
+                                // Generate HMAC-SHA256 signature
+                                const signature = CryptoJS.HmacSHA256(message, secretKey).toString(CryptoJS.enc.Base64);
+                                
+                                request.headers['ACCESS-SIGN'] = signature;
+                                
+                                console.log('✅ WEEX API Request Signed:', {
+                                    timestamp: timestamp,
+                                    method: method,
+                                    path: path,
+                                    bodyLength: body.length,
+                                    signaturePreview: signature.substring(0, 20) + '...'
+                                });
+                            } catch (error) {
+                                console.error('❌ Signature generation failed:', error);
+                            }
+                        }
+                    }
+                    return request;
+                },
+                
+                // Response interceptor for debugging
+                responseInterceptor: (response) => {
+                    // Log response for debugging
+                    if (response.url && (response.url.includes('weex.com') || response.url.includes('api-contract'))) {
+                        console.log('📥 WEEX API Response:', {
+                            url: response.url,
+                            status: response.status,
+                            duration: response.duration + 'ms'
+                        });
+                    }
+                    return response;
+                },
+                
+                // Custom operation sorting
+                operationsSorter: (a, b) => {
+                    const methodOrder = ['get', 'post', 'put', 'patch', 'delete'];
+                    return methodOrder.indexOf(a.get('method')) - methodOrder.indexOf(b.get('method'));
+                },
+                
+                // Custom tag sorting (keep original order)
+                tagsSorter: 'alpha'
+            });
+            
+            // Add keyboard shortcut for search
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    const filterInput = document.querySelector('.operation-filter-input');
+                    if (filterInput) {
+                        filterInput.focus();
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

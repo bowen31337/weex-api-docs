@@ -1,0 +1,444 @@
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0b1a2e; /* Deep navy background */
+  color: #e0e0e0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Header */
+.weex-header {
+  background-color: #05101e;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #1e3a5a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.weex-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00d67c; /* WEEX Green */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weex-logo span {
+  color: #fff;
+}
+
+.header-links a {
+  color: #a0aebf;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.header-links a:hover {
+  color: #00d67c;
+}
+
+/* Swagger UI Overrides for Dark Theme */
+.swagger-ui {
+  color: #e0e0e0;
+}
+
+.swagger-ui .info .title {
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.swagger-ui .info p, .swagger-ui .info li, .swagger-ui .info table {
+  color: #b0b8c3;
+}
+
+.swagger-ui .scheme-container {
+  background-color: #0b1a2e;
+  box-shadow: none;
+  border-bottom: 1px solid #1e3a5a;
+}
+
+/* Operations */
+.swagger-ui .opblock {
+  background-color: #12243e;
+  border: 1px solid #1e3a5a;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.swagger-ui .opblock .opblock-summary {
+  border-bottom: 1px solid #1e3a5a;
+}
+
+.swagger-ui .opblock .opblock-summary-method {
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.swagger-ui .opblock .opblock-summary-path, 
+.swagger-ui .opblock .opblock-summary-description {
+  color: #e0e0e0;
+}
+
+/* Methods Colors */
+.swagger-ui .opblock.opblock-get {
+  background: rgba(97, 175, 254, 0.1);
+  border-color: #61affe;
+}
+.swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: #61affe;
+}
+
+.swagger-ui .opblock.opblock-post {
+  background: rgba(73, 204, 144, 0.1);
+  border-color: #49cc90;
+}
+.swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: #49cc90;
+}
+
+/* Authorize Button */
+.swagger-ui .btn.authorize {
+  color: #00d67c;
+  border-color: #00d67c;
+  background-color: transparent;
+}
+
+.swagger-ui .btn.authorize svg {
+  fill: #00d67c;
+}
+
+.swagger-ui .btn.authorize:hover {
+  background-color: rgba(0, 214, 124, 0.1);
+}
+
+/* Models */
+.swagger-ui section.models {
+  background-color: #12243e;
+  border: 1px solid #1e3a5a;
+  border-radius: 8px;
+}
+
+.swagger-ui section.models h4 {
+  color: #fff;
+}
+
+.swagger-ui .model-box {
+  background-color: #0b1a2e;
+}
+
+.swagger-ui .model {
+  color: #e0e0e0;
+}
+
+.swagger-ui .prop-type {
+  color: #00d67c;
+}
+
+.swagger-ui .prop-format {
+  color: #b0b8c3;
+}
+
+/* Inputs */
+.swagger-ui input[type=email], 
+.swagger-ui input[type=password], 
+.swagger-ui input[type=search], 
+.swagger-ui input[type=text], 
+.swagger-ui textarea, 
+.swagger-ui select {
+  background-color: #05101e;
+  border: 1px solid #1e3a5a;
+  color: #fff;
+}
+
+.swagger-ui .parameter__name {
+  color: #e0e0e0;
+}
+
+.swagger-ui .parameter__type {
+  color: #a0aebf;
+}
+
+/* Responses */
+.swagger-ui .responses-inner h4, 
+.swagger-ui .responses-inner h5 {
+  color: #e0e0e0;
+}
+
+.swagger-ui table thead tr td, 
+.swagger-ui table thead tr th {
+  color: #fff;
+  border-bottom: 1px solid #1e3a5a;
+}
+
+.swagger-ui .response-col_status {
+  color: #e0e0e0;
+}
+
+/* Sidebar / Filter */
+.swagger-ui .filter-container .operation-filter-input {
+  border-color: #1e3a5a;
+  background-color: #05101e;
+  color: #fff;
+}
+
+/* Markdown */
+.swagger-ui .markdown p, 
+.swagger-ui .markdown pre {
+  color: #b0b8c3;
+}
+
+.swagger-ui .markdown code, 
+.swagger-ui .renderedMarkdown code {
+  background: #1e3a5a;
+  color: #00d67c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+/* Enhanced Code Blocks */
+.swagger-ui .markdown pre {
+  background: #05101e;
+  border: 1px solid #1e3a5a;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+.swagger-ui .markdown pre code {
+  background: transparent;
+  padding: 0;
+  color: #e0e0e0;
+}
+
+/* Enhanced Tables */
+.swagger-ui .markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.swagger-ui .markdown table th,
+.swagger-ui .markdown table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #1e3a5a;
+}
+
+.swagger-ui .markdown table th {
+  background: #12243e;
+  color: #fff;
+  font-weight: 600;
+}
+
+.swagger-ui .markdown table tr:hover {
+  background: rgba(0, 214, 124, 0.05);
+}
+
+/* Enhanced Headings in Markdown */
+.swagger-ui .markdown h1,
+.swagger-ui .markdown h2,
+.swagger-ui .markdown h3 {
+  color: #fff;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.swagger-ui .markdown h1 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #00d67c;
+  padding-bottom: 8px;
+}
+
+.swagger-ui .markdown h2 {
+  font-size: 1.4em;
+  color: #00d67c;
+}
+
+.swagger-ui .markdown hr {
+  border: none;
+  border-top: 1px solid #1e3a5a;
+  margin: 32px 0;
+}
+
+/* Tag Sections */
+.swagger-ui .opblock-tag {
+  color: #fff;
+  border-bottom: 1px solid #1e3a5a;
+  padding: 12px 0;
+}
+
+.swagger-ui .opblock-tag:hover {
+  background: rgba(0, 214, 124, 0.05);
+}
+
+.swagger-ui .opblock-tag-section {
+  margin-bottom: 16px;
+}
+
+/* Try it Out Button */
+.swagger-ui .btn.try-out__btn {
+  background: transparent;
+  border: 1px solid #00d67c;
+  color: #00d67c;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.swagger-ui .btn.try-out__btn:hover {
+  background: #00d67c;
+  color: #05101e;
+}
+
+/* Execute Button */
+.swagger-ui .btn.execute {
+  background: #00d67c;
+  color: #05101e;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.swagger-ui .btn.execute:hover {
+  background: #00b868;
+  transform: translateY(-1px);
+}
+
+/* Response Section */
+.swagger-ui .responses-wrapper {
+  background: #0d1f35;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.swagger-ui .response {
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.swagger-ui .response-col_description {
+  color: #b0b8c3;
+}
+
+/* Loading State */
+.swagger-ui .loading-container {
+  padding: 40px;
+  text-align: center;
+}
+
+.swagger-ui .loading-container .loading:after {
+  border-color: #00d67c transparent;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  .weex-header {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .header-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .header-links a {
+    margin-left: 0;
+  }
+  
+  .swagger-ui .opblock-summary-path {
+    font-size: 0.9em;
+  }
+  
+  .signature-info p {
+    font-size: 12px;
+  }
+  
+  .swagger-ui .markdown pre {
+    font-size: 0.85em;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e3a5a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d4a6a;
+}
+
+/* Animation for operations */
+.swagger-ui .opblock {
+  transition: all 0.2s ease;
+}
+
+.swagger-ui .opblock:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Info Description Container */
+.swagger-ui .info .description {
+  max-width: 900px;
+}
+
+/* Server Select */
+.swagger-ui .servers > label select {
+  background: #05101e;
+  border: 1px solid #1e3a5a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+/* Parameter Required Indicator */
+.swagger-ui .parameter__name.required::after {
+  color: #ff6b6b;
+}
+
+/* Error Response Styling */
+.swagger-ui .response-code[class*="4"],
+.swagger-ui .response-code[class*="5"] {
+  color: #ff6b6b;
+}
+
+/* Success Response Styling */
+.swagger-ui .response-code[class*="2"] {
+  color: #00d67c;
+}
