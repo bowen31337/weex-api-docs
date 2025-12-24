@@ -290,32 +290,110 @@ body {
 .swagger-ui .opblock.opblock-delete .opblock-summary-method { background: #ef4444 !important; color: #fff !important; }
 
 .swagger-ui .model .property.primitive {
-  color: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  font-style: italic;
+  font-size: 0.9em;
 }
 
 .swagger-ui .model .property {
-  color: #f1f5f9 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
 .swagger-ui .model-title {
   color: #ffffff !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
 }
 
 .swagger-ui section.models {
   background: rgba(10, 17, 32, 0.4) !important;
   border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-md) !important;
+  border-radius: var(--radius-lg) !important;
   margin: 60px 0 !important;
-  padding: 24px !important;
+  padding: 32px !important;
+  backdrop-filter: blur(10px);
 }
 
 .swagger-ui section.models h4 {
   color: #ffffff !important;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  padding-bottom: 20px;
   font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
+
+/* --- SCHEMA (MODELS) UX OVERHAUL --- */
+
+/* Remove the broken white block backgrounds seen in image */
+.swagger-ui .model-box {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 20px !important;
+  border: 1px solid var(--border-color) !important;
+  margin-top: 10px;
+  display: block;
+}
+
+/* Style the buttons that say "Expand all" etc. */
+.swagger-ui .model-box button {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--border-color) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+  margin-left: 10px !important;
+  box-shadow: none !important;
+}
+
+.swagger-ui .model-box button:hover {
+  background: var(--primary-green-light) !important;
+  color: var(--primary-green) !important;
+  border-color: var(--primary-green) !important;
+}
+
+/* Better Nesting Indicators */
+.swagger-ui .model-box .model-box {
+  border-left: 2px solid var(--primary-green) !important;
+  margin-left: 15px !important;
+  padding-left: 20px !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+}
+
+/* Fix property rows */
+.swagger-ui .property-row {
+  padding: 12px 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.swagger-ui .property-row:last-child {
+  border-bottom: none;
+}
+
+/* Data Type Styling - Make it readable and aligned */
+.swagger-ui .prop-type {
+  color: var(--primary-green) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  margin-left: 12px;
+}
+
+/* Clean up the arrows and toggles */
+.swagger-ui .model-toggle {
+  background: transparent !important;
+  padding: 0 !important;
+  margin-right: 10px !important;
+  filter: invert(1) brightness(2); /* Make arrows white */
+}
+
+/* --- END SCHEMA OVERHAUL --- */
 
 /* Swagger UI Layout Fixes */
 .swagger-ui table thead tr td, .swagger-ui table thead tr th {
@@ -371,6 +449,11 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+
+/* Hide the Swagger UI Validator Badge (clashes with shiny theme) */
+.swagger-ui .validator {
+  display: none !important;
+}
 
 /* Footer */
 .api-footer {
