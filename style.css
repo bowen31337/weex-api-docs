@@ -10,8 +10,8 @@
   --border-color: rgba(30, 58, 90, 0.5);
   --border-glow: rgba(0, 214, 124, 0.2);
   --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
+  --text-secondary: #e2e8f0; /* Brighter: was #94a3b8 */
+  --text-tertiary: #cbd5e1;  /* Brighter: was #64748b */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.7);
@@ -23,7 +23,7 @@
   --transition-slow: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Premium Background with Mesh Gradient and Animated Blobs */
+/* Premium Background */
 body {
   margin: 0;
   padding: 0;
@@ -34,55 +34,42 @@ body {
     radial-gradient(at 50% 100%, rgba(0, 214, 124, 0.03) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* Floating Decorative Blobs */
-body::before, body::after {
-  content: '';
+/* Background Blobs */
+.bg-blob {
   position: fixed;
-  width: 400px;
-  height: 400px;
+  width: 60vw;
+  height: 60vw;
   border-radius: 50%;
-  filter: blur(100px);
+  background: radial-gradient(circle, var(--primary-green-light) 0%, transparent 70%);
+  filter: blur(80px);
   z-index: -1;
-  opacity: 0.15;
   pointer-events: none;
-  animation: float 20s infinite alternate ease-in-out;
+  opacity: 0.4;
+  animation: blobMove 25s infinite alternate ease-in-out;
 }
 
-body::before {
-  top: -100px;
-  right: -100px;
-  background: var(--primary-green);
+.bg-blob-1 { top: -10%; left: -10%; }
+.bg-blob-2 { bottom: -10%; right: -10%; background: radial-gradient(circle, rgba(30, 58, 90, 0.2) 0%, transparent 70%); animation-delay: -12s; }
+
+@keyframes blobMove {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to { transform: translate(10% , 10%) rotate(30deg); }
 }
 
-body::after {
-  bottom: -100px;
-  left: -100px;
-  background: #1e3a5a;
-  animation-delay: -10s;
-}
-
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(50px, 100px) scale(1.2); }
-}
-
-/* Enhanced Header - Glassmorphism v2 */
+/* Header */
 .weex-header {
-  background: rgba(4, 8, 20, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  padding: 1.25rem 3rem;
+  background: rgba(4, 8, 20, 0.85);
+  backdrop-filter: blur(20px);
+  padding: 1rem 3rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -96,74 +83,190 @@ body::after {
   display: flex;
   align-items: center;
   gap: 12px;
-  letter-spacing: -1px;
-  transition: all var(--transition-base);
 }
 
 .weex-logo span {
   color: #fff;
-  text-shadow: 0 0 20px var(--primary-green-glow);
-}
-
-.weex-logo:hover {
-  transform: scale(1.02);
-  filter: brightness(1.1);
+  text-shadow: 0 0 15px var(--primary-green-glow);
 }
 
 .header-links a {
   color: var(--text-secondary);
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
-  letter-spacing: 0.2px;
+  text-decoration: none;
 }
 
 .header-links a:hover {
   color: var(--primary-green);
   background: var(--primary-green-light);
-  box-shadow: inset 0 0 0 1px rgba(0, 214, 124, 0.2);
 }
 
-/* Premium Card Design for Operations */
+/* Info Banner */
+.info-banner {
+  padding: 20px 24px;
+  background: rgba(10, 17, 32, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+.info-banner .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--primary-green-light);
+  border: 1px solid rgba(0, 214, 124, 0.2);
+  border-radius: 20px;
+  color: var(--primary-green);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.info-banner .badge svg, .info-banner .badge .badge-icon {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  fill: currentColor;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.info-banner .auth-info strong {
+  color: var(--primary-green);
+  text-shadow: 0 0 10px var(--primary-green-glow);
+}
+
+.info-banner .auth-info {
+  color: #f8fafc; /* Brighter for banner */
+  font-size: 14px;
+}
+
+/* Swagger UI Customization */
+.swagger-ui {
+  color: var(--text-primary) !important;
+  padding: 0 24px;
+}
+
+.swagger-ui .info {
+  background: rgba(10, 17, 32, 0.4) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 40px !important;
+  margin: 40px 0 !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Global Text Contrast Overrides */
+.swagger-ui .info p, 
+.swagger-ui .info li, 
+.swagger-ui .info table,
+.swagger-ui .renderedMarkdown p,
+.swagger-ui .renderedMarkdown li,
+.swagger-ui .renderedMarkdown table,
+.swagger-ui .opblock-description-wrapper p,
+.swagger-ui .opblock-description-wrapper li,
+.swagger-ui .opblock-external-docs-wrapper p,
+.swagger-ui .opblock-external-docs-wrapper li,
+.swagger-ui .opblock-title_normal,
+.swagger-ui .response-col_description,
+.swagger-ui .response-col_links {
+  color: #e2e8f0 !important; /* High contrast slate-white */
+  line-height: 1.6;
+}
+
+/* Specific fix for the image issue: list bullets and text */
+.swagger-ui ul li, 
+.swagger-ui ol li {
+  color: #f1f5f9 !important; /* Brighter for lists */
+  margin-bottom: 8px;
+}
+
+.swagger-ui .info .title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 20px rgba(0, 214, 124, 0.3);
+}
+
+.swagger-ui .opblock .opblock-summary-path, 
+.swagger-ui .opblock .opblock-summary-description {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.swagger-ui .parameter__name {
+  color: var(--primary-green) !important;
+  font-weight: 700 !important;
+}
+
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__in,
+.swagger-ui .parameter__extension {
+  color: #94a3b8 !important; /* Subtle but readable */
+}
+
+/* Header link contrast */
+.header-links a {
+  color: #f8fafc !important; /* Force near-white */
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.swagger-ui a, .swagger-ui .renderedMarkdown a {
+  color: var(--primary-green) !important;
+  text-decoration: none !important;
+}
+
+.swagger-ui a:hover, .swagger-ui .renderedMarkdown a:hover {
+  text-decoration: underline !important;
+  filter: brightness(1.2);
+}
+
+.swagger-ui .scheme-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Fix for giant icons in info description */
+.swagger-ui .info .description svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Method Cards */
 .swagger-ui .opblock {
   background: rgba(10, 17, 32, 0.6) !important;
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-color) !important;
   border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-sm);
   margin-bottom: 20px !important;
   transition: all var(--transition-base) !important;
   position: relative;
-  overflow: visible !important;
-}
-
-.swagger-ui .opblock::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--border-color), transparent, var(--border-color));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask-composite: destination-out;
-  pointer-events: none;
-  transition: opacity var(--transition-base);
+  overflow: hidden !important;
 }
 
 .swagger-ui .opblock:hover {
-  transform: translateY(-4px) scale(1.005);
-  box-shadow: var(--shadow-lg), 0 0 20px rgba(0, 214, 124, 0.1);
-  border-color: var(--border-glow) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 214, 124, 0.1);
+  border-color: var(--primary-green) !important;
 }
 
-.swagger-ui .opblock:hover::after {
-  background: linear-gradient(135deg, var(--primary-green), transparent, var(--primary-green));
-  opacity: 0.6;
-}
-
-/* Custom Spotlight Effect Class (to be used in JS) */
+/* Spotlight Effect */
 .spotlight {
   position: absolute;
   top: 0;
@@ -181,132 +284,120 @@ body::after {
   opacity: 1;
 }
 
-/* Method Badges - Neon Look */
-.swagger-ui .opblock .opblock-summary-method {
-  border-radius: 6px !important;
-  font-size: 11px !important;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 6px 12px !important;
-  box-shadow: 0 0 15px currentColor;
+.swagger-ui .opblock.opblock-get .opblock-summary-method { background: #0ea5e9 !important; color: #fff !important; }
+.swagger-ui .opblock.opblock-post .opblock-summary-method { background: #10b981 !important; color: #fff !important; }
+.swagger-ui .opblock.opblock-put .opblock-summary-method { background: #f59e0b !important; color: #fff !important; }
+.swagger-ui .opblock.opblock-delete .opblock-summary-method { background: #ef4444 !important; color: #fff !important; }
+
+.swagger-ui .model .property.primitive {
+  color: #e2e8f0 !important;
 }
 
-.swagger-ui .opblock.opblock-get .opblock-summary-method { background: #0ea5e9 !important; color: #fff; }
-.swagger-ui .opblock.opblock-post .opblock-summary-method { background: #10b981 !important; color: #fff; }
-.swagger-ui .opblock.opblock-put .opblock-summary-method { background: #f59e0b !important; color: #fff; }
-.swagger-ui .opblock.opblock-delete .opblock-summary-method { background: #ef4444 !important; color: #fff; }
+.swagger-ui .model .property {
+  color: #f1f5f9 !important;
+}
 
-/* Enhanced Authorize Button */
+.swagger-ui .model-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.swagger-ui section.models {
+  background: rgba(10, 17, 32, 0.4) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+  margin: 60px 0 !important;
+  padding: 24px !important;
+}
+
+.swagger-ui section.models h4 {
+  color: #ffffff !important;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  font-weight: 800 !important;
+}
+
+/* Swagger UI Layout Fixes */
+.swagger-ui table thead tr td, .swagger-ui table thead tr th {
+  color: #ffffff !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: rgba(255,255,255,0.05) !important;
+  font-weight: 700 !important;
+}
+
+.swagger-ui table tbody tr td {
+  color: #e2e8f0 !important;
+}
+
+.swagger-ui .prop-type {
+  color: var(--primary-green) !important;
+  font-weight: 600 !important;
+}
+
+.swagger-ui .prop-format {
+  color: #94a3b8 !important;
+}
+
+.swagger-ui .parameter__name {
+  color: var(--primary-green) !important;
+}
+
+/* Buttons */
 .swagger-ui .btn.authorize {
   background: linear-gradient(135deg, var(--primary-green) 0%, #00f28a 100%) !important;
-  color: var(--bg-tertiary) !important;
+  color: var(--bg-primary) !important;
   border: none !important;
-  padding: 12px 28px !important;
   font-weight: 700 !important;
+  padding: 10px 24px !important;
   border-radius: var(--radius-sm) !important;
-  box-shadow: 0 0 25px var(--primary-green-glow) !important;
+  box-shadow: 0 0 20px var(--primary-green-glow) !important;
   transition: all var(--transition-base) !important;
   animation: pulse-glow 2s infinite;
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 15px var(--primary-green-glow); }
-  50% { box-shadow: 0 0 35px var(--primary-green); }
-  100% { box-shadow: 0 0 15px var(--primary-green-glow); }
+  0% { box-shadow: 0 0 10px var(--primary-green-glow); }
+  50% { box-shadow: 0 0 25px var(--primary-green); }
+  100% { box-shadow: 0 0 10px var(--primary-green-glow); }
 }
 
 .swagger-ui .btn.authorize:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 0 35px var(--primary-green) !important;
+  transform: translateY(-2px);
   filter: brightness(1.1);
 }
 
-.swagger-ui .btn.authorize svg {
-  fill: var(--bg-tertiary) !important;
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+
+/* Footer */
+.api-footer {
+  padding: 60px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-tertiary);
+  margin-top: 80px;
 }
 
-/* Improved Code Blocks */
-.swagger-ui .markdown pre, .swagger-ui .model-box {
-  background: rgba(4, 8, 20, 0.8) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-md) !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.swagger-ui .markdown pre::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary-green), transparent);
-}
-
-/* Custom Scrollbar for Premium Look */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 20px;
-  border: 2px solid var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-green);
-}
-
-/* Animations for Tag Expand */
-.swagger-ui .opblock-tag {
-  border-radius: var(--radius-sm);
-  padding: 20px !important;
-  margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all var(--transition-base);
-}
-
-.swagger-ui .opblock-tag:hover {
-  background: rgba(255, 255, 255, 0.05);
-  padding-left: 30px !important;
-}
-
-/* Copy Button Mini */
-.copy-btn-mini {
-  background: var(--primary-green-light);
-  border: 1px solid var(--border-glow);
-  color: var(--primary-green);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: all var(--transition-fast);
-}
-
-.copy-btn-mini:hover {
-  background: var(--primary-green);
-  color: var(--bg-tertiary);
-}
-
-.copy-btn-mini:active {
-  transform: scale(0.9);
-}
-
-/* Mobile Adjustments */
+/* Mobile */
 @media screen and (max-width: 768px) {
   .weex-header { padding: 1rem 1.5rem; }
-  .weex-logo { font-size: 1.4rem; }
   .header-links { 
-    background: rgba(4, 8, 20, 0.98); 
-    padding: 20px;
-    gap: 15px;
+    display: none; 
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(4, 8, 20, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 24px;
+    flex-direction: column;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1001;
   }
+  .header-links.active { display: flex; }
+  .mobile-menu-toggle { display: block; }
 }
