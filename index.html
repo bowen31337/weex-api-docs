@@ -13,97 +13,65 @@
     <!-- Import CryptoJS for HMAC SHA256 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <style>
-        /* Quick Info Banner */
-        .info-banner {
-            padding: 16px 24px;
-            background: linear-gradient(135deg, #0d1f35 0%, #12243e 100%);
-            border-bottom: 1px solid #1e3a5a;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            align-items: center;
-            justify-content: center;
+        /* Spotlight Effect Enhancement */
+        .spotlight-container {
+            position: relative;
+            z-index: 1;
         }
         
-        .info-banner .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(0, 214, 124, 0.1);
-            border: 1px solid rgba(0, 214, 124, 0.3);
-            border-radius: 20px;
-            color: #00d67c;
-            font-size: 13px;
-            font-weight: 500;
+        /* Premium Background Blobs */
+        .bg-blob {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-green-light) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.4;
+            animation: move 25s infinite alternate ease-in-out;
         }
         
-        .info-banner .badge svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-        }
+        .bg-blob-1 { top: -10%; left: -10%; }
+        .bg-blob-2 { bottom: -10%; right: -10%; background: radial-gradient(circle, rgba(30, 58, 90, 0.2) 0%, transparent 70%); animation-delay: -12s; }
         
-        .info-banner .auth-info {
-            color: #b0b8c3;
-            font-size: 14px;
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(10% , 10%) rotate(30deg); }
         }
-        
-        .info-banner .auth-info strong {
-            color: #fff;
+
+        /* Glass Cards for Swagger */
+        #swagger-ui {
+            margin-top: 20px;
+            padding: 0 20px;
         }
-        
-        /* Footer */
-        .api-footer {
-            background: #05101e;
-            padding: 24px;
-            text-align: center;
-            border-top: 1px solid #1e3a5a;
-            color: #6c757d;
-            font-size: 13px;
-        }
-        
-        .api-footer a {
-            color: #00d67c;
-            text-decoration: none;
-        }
-        
-        .api-footer a:hover {
-            text-decoration: underline;
-        }
-        
-        /* Skip to content link for accessibility */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #00d67c;
-            color: #05101e;
-            padding: 8px 16px;
-            z-index: 100;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .skip-link:focus {
-            top: 0;
-        }
-        
-        @media screen and (max-width: 768px) {
-            .info-banner {
-                flex-direction: column;
-                text-align: center;
-            }
+
+        .swagger-ui .info {
+            background: rgba(10, 17, 32, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
         }
     </style>
 </head>
 <body>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
     <a href="#swagger-ui" class="skip-link">Skip to API Documentation</a>
     
     <header class="weex-header">
         <a href="#" class="weex-logo">
             <span>WEEX</span> API Docs
         </a>
+        <button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+        </button>
         <nav class="header-links" aria-label="Main navigation">
             <a href="https://www.weex.com" target="_blank" rel="noopener noreferrer">WEEX Official</a>
             <a href="https://www.weex.com/help" target="_blank" rel="noopener noreferrer">Support Center</a>
@@ -135,7 +103,7 @@
             <a href="https://www.weex.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> | 
             <a href="https://www.weex.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
         </p>
-        <p>Base URL: <code>https://api-contract.weex.com</code></p>
+        <p>Base URL: <code id="base-url">https://api-contract.weex.com</code> <button onclick="copyToClipboard('https://api-contract.weex.com')" class="copy-btn-mini" aria-label="Copy Base URL">Copy</button></p>
     </footer>
 
     <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
@@ -309,7 +277,100 @@
                     timestampInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             }, 30000);
+
+            // Mobile menu toggle functionality
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const headerLinks = document.querySelector('.header-links');
+            
+            if (mobileMenuToggle && headerLinks) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+                    mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+                    headerLinks.classList.toggle('active');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!headerLinks.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                        headerLinks.classList.remove('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                // Close menu when clicking on a link
+                headerLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        headerLinks.classList.remove('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
+            // Spotlight Effect Implementation
+            document.addEventListener('mousemove', (e) => {
+                const cards = document.querySelectorAll('.swagger-ui .opblock');
+                cards.forEach(card => {
+                    if (!card.querySelector('.spotlight')) {
+                        const spotlight = document.createElement('div');
+                        spotlight.className = 'spotlight';
+                        card.appendChild(spotlight);
+                    }
+                    
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    card.style.setProperty('--x', `${x}px`);
+                    card.style.setProperty('--y', `${y}px`);
+                });
+            });
+
+            // Smooth Tag Expansion Animation
+            const observerTags = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && node.classList && node.classList.contains('opblock-tag-section')) {
+                            node.style.opacity = '0';
+                            node.style.transform = 'translateY(10px)';
+                            setTimeout(() => {
+                                node.style.transition = 'all 0.5s ease-out';
+                                node.style.opacity = '1';
+                                node.style.transform = 'translateY(0)';
+                            }, 50);
+                        }
+                    });
+                });
+            });
+            
+            observerTags.observe(document.body, { childList: true, subtree: true });
         };
+
+        // Utility: Copy to Clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.innerText = 'Copied to clipboard!';
+                toast.style.position = 'fixed';
+                toast.style.bottom = '20px';
+                toast.style.right = '20px';
+                toast.style.background = 'var(--primary-green)';
+                toast.style.color = 'var(--bg-tertiary)';
+                toast.style.padding = '10px 20px';
+                toast.style.borderRadius = '8px';
+                toast.style.zIndex = '10000';
+                toast.style.boxShadow = 'var(--shadow-lg)';
+                toast.style.animation = 'fadeInUp 0.3s ease-out';
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOutDown 0.3s ease-in';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+            });
+        }
     </script>
+    <style>
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOutDown { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+    </style>
 </body>
 </html>
