@@ -212,12 +212,15 @@ info:
     name: Proprietary
     url: https://www.weex.com/terms
 servers:
+  - url: http://localhost:8888
+    description: Local Proxy (for testing "Try it out" in browser)
   - url: https://api-contract.weex.com
-    description: WEEX Futures Trading API Server
+    description: WEEX Production API (use in your code/curl)
 security:
   - WeexApiKey: []
     WeexApiSecret: []
     WeexPassphrase: []
+    WeexTimestamp: []
 components:
   securitySchemes:
     WeexApiKey:
@@ -235,6 +238,11 @@ components:
       in: header
       name: ACCESS-PASSPHRASE
       description: Enter your WEEX API Passphrase
+    WeexTimestamp:
+      type: apiKey
+      in: header
+      name: ACCESS-TIMESTAMP
+      description: Unix millisecond timestamp (e.g., 1766538023615). Auto-generated when using proxy.
   schemas:
     ServerTime:
       type: object
@@ -1609,6 +1617,23 @@ paths:
       description: |
         Place a new futures order on the platform.
         
+        **⚠️ IMPORTANT: Size Calculation**
+        
+        The `size` parameter is the **BTC amount**, not the number of contracts!
+        
+        ```python
+        # Calculate size for a target USDT value
+        target_usdt = 15.0  # Target order value in USDT
+        current_price = get_ticker("cmt_btcusdt")["last"]  # e.g., 87500
+        size = round(target_usdt / current_price, 4)  # e.g., 0.0002 BTC
+        ```
+        
+        **Example:** For a $15 USDT order at BTC price $87,500:
+        - `size = 15 / 87500 = 0.000171...`
+        - Rounded to 4 decimals: `size = "0.0002"` (~$17.50 actual value)
+        
+        ---
+        
         **Order Types (type parameter):**
         - `1`: Open Long - Buy to open a long position
         - `2`: Open Short - Sell to open a short position
@@ -1617,7 +1642,7 @@ paths:
         
         **Execution Types (order_type parameter):**
         - `0`: Normal order (default)
-        - `1`: Post-only (maker only, rejected if would match immediately)
+        - `1`: Market order (recommended for testing)
         - `2`: Fill or Kill (FOK) - Execute entirely or cancel
         - `3`: Immediate or Cancel (IOC) - Execute any available, cancel rest
         
@@ -1628,10 +1653,11 @@ paths:
         **Authentication Required:** Yes - ACCESS-KEY, ACCESS-SIGN, ACCESS-PASSPHRASE
         
         **Workflow:**
-        1. Check available balance using `/capi/v2/account/assets`
-        2. Verify symbol exists using `/capi/v2/market/contracts`
-        3. Place order with this endpoint
-        4. Monitor order status using `/capi/v2/order/detail`
+        1. Get current price using `/capi/v2/market/ticker?symbol=cmt_btcusdt`
+        2. Calculate size: `size = target_usdt / current_price`
+        3. Round to 4 decimals: `size = round(size, 4)`
+        4. Place order with this endpoint
+        5. Monitor order status using `/capi/v2/order/detail`
       operationId: placeOrder
       requestBody:
         required: true
@@ -1659,8 +1685,8 @@ paths:
                   example: "my_order_001"
                 size:
                   type: string
-                  description: Order quantity in contracts (must be positive)
-                  example: "10"
+                  description: "Order size in BTC (not contracts!). Calculate: size = target_usdt / btc_price. Round to 4 decimals."
+                  example: "0.0002"
                 type:
                   type: string
                   description: "Order direction: 1=Open Long, 2=Open Short, 3=Close Long, 4=Close Short"
@@ -1697,12 +1723,10 @@ paths:
             example:
               symbol: "cmt_btcusdt"
               client_oid: "my_order_001"
-              size: "10"
+              size: "0.0002"
               type: "1"
-              order_type: "0"
-              match_price: "0"
-              price: "95000.5"
-              marginMode: 1
+              order_type: "1"
+              match_price: "1"
       responses:
         '200':
           description: Order placed successfully

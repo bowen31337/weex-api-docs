@@ -124,7 +124,7 @@
         </div>
         <div class="auth-info">
             <strong>🔐 How to Use:</strong> 
-            Click "Authorize" → Enter your API Key, Secret, and Passphrase → Signatures auto-generated
+            Click "Authorize" → Enter API Key, Secret, Passphrase → Timestamp auto-filled → Signatures calculated by proxy
         </div>
     </div>
 
@@ -176,46 +176,70 @@
                 requestInterceptor: (request) => {
                     // Check if the request is destined for the WEEX API
                     if (request.url.includes('weex.com') || request.url.includes('api-contract')) {
-                        const timestamp = Date.now().toString();
-                        request.headers['ACCESS-TIMESTAMP'] = timestamp;
+                        const urlObj = new URL(request.url);
+                        const path = urlObj.pathname;
                         
-                        // Ensure Content-Type is set
-                        if (!request.headers['Content-Type']) {
-                            request.headers['Content-Type'] = 'application/json';
-                        }
+                        // Public market endpoints that don't require authentication
+                        const publicEndpoints = [
+                            '/capi/v2/market/time',
+                            '/capi/v2/market/contracts',
+                            '/capi/v2/market/depth',
+                            '/capi/v2/market/tickers',
+                            '/capi/v2/market/ticker',
+                            '/capi/v2/market/trades',
+                            '/capi/v2/market/candles',
+                            '/capi/v2/market/index',
+                            '/capi/v2/market/open_interest',
+                            '/capi/v2/market/funding_time',
+                            '/capi/v2/market/getHistoryFundRate',
+                            '/capi/v2/market/currentFundRate'
+                        ];
                         
-                        // Default locale
-                        if (!request.headers['locale']) {
-                            request.headers['locale'] = 'en-US';
-                        }
-
-                        // Signature Generation Logic
-                        if (request.headers['ACCESS-SIGN']) {
-                            try {
-                                const secretKey = request.headers['ACCESS-SIGN'];
-                                const method = request.method.toUpperCase();
-                                const urlObj = new URL(request.url);
-                                const path = urlObj.pathname;
-                                const body = request.body || '';
-                                
-                                // Build message: timestamp + method + path + body
-                                const message = timestamp + method + path + body;
-                                
-                                // Generate HMAC-SHA256 signature
-                                const signature = CryptoJS.HmacSHA256(message, secretKey).toString(CryptoJS.enc.Base64);
-                                
-                                request.headers['ACCESS-SIGN'] = signature;
-                                
-                                console.log('✅ WEEX API Request Signed:', {
-                                    timestamp: timestamp,
-                                    method: method,
-                                    path: path,
-                                    bodyLength: body.length,
-                                    signaturePreview: signature.substring(0, 20) + '...'
-                                });
-                            } catch (error) {
-                                console.error('❌ Signature generation failed:', error);
+                        const isPublicEndpoint = publicEndpoints.some(endpoint => path.includes(endpoint));
+                        
+                        // Only add auth headers for non-public endpoints
+                        if (!isPublicEndpoint) {
+                            const timestamp = Date.now().toString();
+                            request.headers['ACCESS-TIMESTAMP'] = timestamp;
+                            
+                            // Ensure Content-Type is set
+                            if (!request.headers['Content-Type']) {
+                                request.headers['Content-Type'] = 'application/json';
                             }
+                            
+                            // Default locale
+                            if (!request.headers['locale']) {
+                                request.headers['locale'] = 'en-US';
+                            }
+
+                            // Signature Generation Logic
+                            if (request.headers['ACCESS-SIGN']) {
+                                try {
+                                    const secretKey = request.headers['ACCESS-SIGN'];
+                                    const method = request.method.toUpperCase();
+                                    const body = request.body || '';
+                                    
+                                    // Build message: timestamp + method + path + body
+                                    const message = timestamp + method + path + body;
+                                    
+                                    // Generate HMAC-SHA256 signature
+                                    const signature = CryptoJS.HmacSHA256(message, secretKey).toString(CryptoJS.enc.Base64);
+                                    
+                                    request.headers['ACCESS-SIGN'] = signature;
+                                    
+                                    console.log('✅ WEEX API Request Signed:', {
+                                        timestamp: timestamp,
+                                        method: method,
+                                        path: path,
+                                        bodyLength: body.length,
+                                        signaturePreview: signature.substring(0, 20) + '...'
+                                    });
+                                } catch (error) {
+                                    console.error('❌ Signature generation failed:', error);
+                                }
+                            }
+                        } else {
+                            console.log('📊 Public Market API (no auth required):', path);
                         }
                     }
                     return request;
@@ -254,6 +278,37 @@
                     }
                 }
             });
+            
+            // Auto-populate timestamp when Authorize dialog opens
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && node.classList && node.classList.contains('dialog-ux')) {
+                            // Find the ACCESS-TIMESTAMP input field
+                            setTimeout(() => {
+                                const timestampInput = document.querySelector('input[name="ACCESS-TIMESTAMP"]');
+                                if (timestampInput && !timestampInput.value) {
+                                    timestampInput.value = Date.now().toString();
+                                    // Trigger input event to update Swagger UI state
+                                    timestampInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                    console.log('🕐 Auto-populated ACCESS-TIMESTAMP:', timestampInput.value);
+                                }
+                            }, 100);
+                        }
+                    });
+                });
+            });
+            
+            observer.observe(document.body, { childList: true, subtree: true });
+            
+            // Refresh timestamp every 30 seconds if dialog is open
+            setInterval(() => {
+                const timestampInput = document.querySelector('input[name="ACCESS-TIMESTAMP"]');
+                if (timestampInput) {
+                    timestampInput.value = Date.now().toString();
+                    timestampInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }, 30000);
         };
     </script>
 </body>
