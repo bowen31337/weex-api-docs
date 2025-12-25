@@ -32,6 +32,7 @@
             <a href="https://www.weex.com/help" target="_blank" rel="noopener noreferrer">Support Center</a>
             <a href="./CHANGELOG.md" target="_blank">Changelog</a>
             <a href="./openapi.json" download="weex-openapi.json">Download JSON</a>
+            <button id="toggle-websocket" class="websocket-toggle-btn" onclick="toggleWebSocketDocs()">🔌 WebSocket API</button>
         </nav>
     </header>
 
@@ -52,6 +53,198 @@
     </div>
 
     <main id="swagger-ui" role="main"></main>
+
+    <!-- WebSocket Documentation Section -->
+    <section id="websocket-docs" class="websocket-section" style="display: none;">
+        <div class="websocket-container">
+            <h1 class="websocket-title">🔌 WebSocket API Documentation</h1>
+            <p class="websocket-intro">Real-time market data and account updates via WebSocket connections</p>
+            
+            <div class="websocket-content">
+                <!-- Servers -->
+                <div class="websocket-card">
+                    <h2>📡 WebSocket Endpoints</h2>
+                    <div class="endpoint-list">
+                        <div class="endpoint-item">
+                            <div class="endpoint-badge public">Public</div>
+                            <code class="endpoint-url">wss://ws-contract.weex.com/v2/ws/public</code>
+                            <p class="endpoint-desc">Market data (no authentication required)</p>
+                        </div>
+                        <div class="endpoint-item">
+                            <div class="endpoint-badge private">Private</div>
+                            <code class="endpoint-url">wss://ws-contract.weex.com/v2/ws/private</code>
+                            <p class="endpoint-desc">Account data (authentication required)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connection Limits -->
+                <div class="websocket-card">
+                    <h2>⚙️ Connection Limits</h2>
+                    <ul class="limit-list">
+                        <li><strong>Connections per IP:</strong> 300 requests per 5 minutes, max 100 concurrent</li>
+                        <li><strong>Subscriptions per connection:</strong> 240 operations per hour, max 100 channels</li>
+                    </ul>
+                </div>
+
+                <!-- Heartbeat -->
+                <div class="websocket-card">
+                    <h2>💓 Heartbeat</h2>
+                    <p>Server sends ping messages periodically. Client must respond with pong to maintain connection.</p>
+                    <div class="code-example">
+                        <div class="code-block">
+                            <h4>Ping Message:</h4>
+                            <pre><code>{
+  "event": "ping",
+  "time": "1693208170000"
+}</code></pre>
+                        </div>
+                        <div class="code-block">
+                            <h4>Pong Response:</h4>
+                            <pre><code>{
+  "event": "pong",
+  "time": "1693208170000"
+}</code></pre>
+                        </div>
+                    </div>
+                    <p class="note">⚠️ Maximum 5 missed pongs before connection is closed.</p>
+                </div>
+
+                <!-- Authentication -->
+                <div class="websocket-card">
+                    <h2>🔐 Authentication (Private Channels)</h2>
+                    <p>Private channels require header authentication:</p>
+                    <table class="auth-table">
+                        <thead>
+                            <tr>
+                                <th>Header</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>ACCESS-KEY</code></td>
+                                <td>Your API key</td>
+                            </tr>
+                            <tr>
+                                <td><code>ACCESS-PASSPHRASE</code></td>
+                                <td>Your API passphrase</td>
+                            </tr>
+                            <tr>
+                                <td><code>ACCESS-TIMESTAMP</code></td>
+                                <td>Unix millisecond timestamp</td>
+                            </tr>
+                            <tr>
+                                <td><code>ACCESS-SIGN</code></td>
+                                <td>Base64(HMAC-SHA256(secret, timestamp + '/v2/ws/private'))</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Public Channels -->
+                <div class="websocket-card">
+                    <h2>📊 Public Channels</h2>
+                    <div id="public-channels-list"></div>
+                </div>
+
+                <!-- Private Channels -->
+                <div class="websocket-card">
+                    <h2>🔒 Private Channels</h2>
+                    <div id="private-channels-list"></div>
+                </div>
+
+                <!-- Message Formats -->
+                <div class="websocket-card">
+                    <h2>📨 Message Formats</h2>
+                    <div id="message-formats-list"></div>
+                </div>
+
+                <!-- Code Examples -->
+                <div class="websocket-card">
+                    <h2>💻 Code Examples</h2>
+                    <div class="code-tabs">
+                        <button class="code-tab active" data-tab="javascript">JavaScript</button>
+                        <button class="code-tab" data-tab="python">Python</button>
+                    </div>
+                    <div class="code-content">
+                        <div class="code-panel active" id="javascript-example">
+                            <pre><code>// JavaScript WebSocket Example
+const ws = new WebSocket('wss://ws-contract.weex.com/v2/ws/public');
+
+ws.onopen = () => {
+  console.log('WebSocket connected');
+  
+  // Subscribe to ticker channel
+  ws.send(JSON.stringify({
+    event: 'subscribe',
+    channel: 'ticker.cmt_btcusdt'
+  }));
+};
+
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  
+  if (message.event === 'ping') {
+    // Respond to heartbeat
+    ws.send(JSON.stringify({
+      event: 'pong',
+      time: message.time
+    }));
+  } else if (message.event === 'payload') {
+    // Handle market data
+    console.log('Received data:', message.data);
+  }
+};
+
+ws.onerror = (error) => {
+  console.error('WebSocket error:', error);
+};
+
+ws.onclose = () => {
+  console.log('WebSocket disconnected');
+};</code></pre>
+                        </div>
+                        <div class="code-panel" id="python-example">
+                            <pre><code># Python WebSocket Example
+import asyncio
+import websockets
+import json
+
+async def connect_websocket():
+    uri = "wss://ws-contract.weex.com/v2/ws/public"
+    
+    async with websockets.connect(uri) as websocket:
+        # Subscribe to ticker channel
+        subscribe_msg = {
+            "event": "subscribe",
+            "channel": "ticker.cmt_btcusdt"
+        }
+        await websocket.send(json.dumps(subscribe_msg))
+        
+        # Listen for messages
+        async for message in websocket:
+            data = json.loads(message)
+            
+            if data.get("event") == "ping":
+                # Respond to heartbeat
+                pong_msg = {
+                    "event": "pong",
+                    "time": data["time"]
+                }
+                await websocket.send(json.dumps(pong_msg))
+            elif data.get("event") == "payload":
+                # Handle market data
+                print("Received data:", data["data"])
+
+# Run the client
+asyncio.run(connect_websocket())</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer class="api-footer">
         <p>© 2024 WEEX. All rights reserved. | 
@@ -299,7 +492,157 @@
             });
             
             observerTags.observe(document.body, { childList: true, subtree: true });
+            
+            // Load and render WebSocket documentation
+            loadWebSocketDocs();
         };
+        
+        // Toggle between REST API and WebSocket documentation
+        function toggleWebSocketDocs() {
+            const swaggerUI = document.getElementById('swagger-ui');
+            const websocketDocs = document.getElementById('websocket-docs');
+            const toggleBtn = document.getElementById('toggle-websocket');
+            
+            if (websocketDocs.style.display === 'none') {
+                swaggerUI.style.display = 'none';
+                websocketDocs.style.display = 'block';
+                toggleBtn.textContent = '📡 REST API';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                swaggerUI.style.display = 'block';
+                websocketDocs.style.display = 'none';
+                toggleBtn.textContent = '🔌 WebSocket API';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // Load WebSocket documentation from OpenAPI spec
+        async function loadWebSocketDocs() {
+            try {
+                const response = await fetch('./openapi.json');
+                const spec = await response.json();
+                const wsData = spec['x-websocket'];
+                
+                if (!wsData) return;
+                
+                // Render public channels
+                renderChannels(wsData.channels.public, 'public-channels-list', 'Public');
+                
+                // Render private channels
+                renderChannels(wsData.channels.private, 'private-channels-list', 'Private');
+                
+                // Render message formats
+                renderMessageFormats(wsData.message_formats);
+                
+                // Initialize code tabs after content is loaded
+                setTimeout(initCodeTabs, 100);
+                
+            } catch (error) {
+                console.error('Failed to load WebSocket documentation:', error);
+            }
+        }
+        
+        // Render channels
+        function renderChannels(channels, containerId, type) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            Object.keys(channels).forEach(channelName => {
+                const channel = channels[channelName];
+                const channelDiv = document.createElement('div');
+                channelDiv.className = 'channel-item';
+                
+                let html = `<h3>${channelName.charAt(0).toUpperCase() + channelName.slice(1)}</h3>`;
+                html += `<p>${channel.description}</p>`;
+                
+                if (channel.channel_format) {
+                    html += `<div class="channel-format">${channel.channel_format}</div>`;
+                }
+                
+                if (channel.subscribe) {
+                    html += `<div class="channel-example"><h4>Subscribe:</h4><pre><code>${JSON.stringify(channel.subscribe, null, 2)}</code></pre></div>`;
+                }
+                
+                if (channel.subscribe_response) {
+                    html += `<div class="channel-example"><h4>Subscribe Response:</h4><pre><code>${JSON.stringify(channel.subscribe_response, null, 2)}</code></pre></div>`;
+                }
+                
+                if (channel.payload) {
+                    html += `<div class="channel-example"><h4>Payload Example:</h4><pre><code>${JSON.stringify(channel.payload, null, 2)}</code></pre></div>`;
+                }
+                
+                if (channel.fields) {
+                    html += '<div class="channel-example"><h4>Fields:</h4><ul>';
+                    Object.keys(channel.fields).forEach(field => {
+                        html += `<li><strong>${field}:</strong> ${channel.fields[field]}</li>`;
+                    });
+                    html += '</ul></div>';
+                }
+                
+                if (channel.levels) {
+                    html += `<div class="channel-example"><h4>Available Levels:</h4><p>${channel.levels.join(', ')}</p></div>`;
+                }
+                
+                if (channel.price_types) {
+                    html += `<div class="channel-example"><h4>Price Types:</h4><p>${channel.price_types.join(', ')}</p></div>`;
+                }
+                
+                if (channel.intervals) {
+                    html += `<div class="channel-example"><h4>Intervals:</h4><p>${channel.intervals.join(', ')}</p></div>`;
+                }
+                
+                channelDiv.innerHTML = html;
+                container.appendChild(channelDiv);
+            });
+        }
+        
+        // Render message formats
+        function renderMessageFormats(formats) {
+            const container = document.getElementById('message-formats-list');
+            if (!container) return;
+            
+            Object.keys(formats).forEach(formatName => {
+                const format = formats[formatName];
+                const formatDiv = document.createElement('div');
+                formatDiv.className = 'channel-item';
+                
+                let html = `<h3>${formatName.charAt(0).toUpperCase() + formatName.slice(1)}</h3>`;
+                html += `<div class="channel-example"><pre><code>${JSON.stringify(format, null, 2)}</code></pre></div>`;
+                
+                formatDiv.innerHTML = html;
+                container.appendChild(formatDiv);
+            });
+        }
+        
+        // Code tab switching
+        function initCodeTabs() {
+            const codeTabs = document.querySelectorAll('.code-tab');
+            codeTabs.forEach(tab => {
+                // Remove existing listeners to avoid duplicates
+                const newTab = tab.cloneNode(true);
+                tab.parentNode.replaceChild(newTab, tab);
+                
+                newTab.addEventListener('click', () => {
+                    const tabName = newTab.dataset.tab;
+                    const codeCard = newTab.closest('.websocket-card');
+                    const codeContent = codeCard.querySelector('.code-content');
+                    
+                    // Update active tab within this card
+                    const cardTabs = codeCard.querySelectorAll('.code-tab');
+                    cardTabs.forEach(t => t.classList.remove('active'));
+                    newTab.classList.add('active');
+                    
+                    // Update active panel
+                    const panels = codeContent.querySelectorAll('.code-panel');
+                    panels.forEach(panel => {
+                        panel.classList.remove('active');
+                        if (panel.id === `${tabName}-example`) {
+                            panel.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
 
         // Utility: Copy to Clipboard
         function copyToClipboard(text) {

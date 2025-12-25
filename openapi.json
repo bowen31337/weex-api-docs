@@ -3211,6 +3211,30 @@
         }
       }
     },
+    "/websocket": {
+      "get": {
+        "tags": [
+          "WebSocket API"
+        ],
+        "summary": "WebSocket API Documentation",
+        "description": "**WebSocket API for Real-Time Data**\n\nThe WEEX WebSocket API provides real-time market data and account updates through persistent WebSocket connections.\n\n## Endpoints\n\n- **Public WebSocket**: `wss://ws-contract.weex.com/v2/ws/public` - Market data (no authentication)\n- **Private WebSocket**: `wss://ws-contract.weex.com/v2/ws/private` - Account data (authentication required)\n\n## Connection Limits\n\n- **Connections per IP**: 300 requests per 5 minutes, max 100 concurrent\n- **Subscriptions per connection**: 240 operations per hour, max 100 channels\n\n## Heartbeat\n\nServer sends ping messages periodically. Client must respond with pong to maintain connection.\n\n**Ping Format:**\n```json\n{\n  \"event\": \"ping\",\n  \"time\": \"1693208170000\"\n}\n```\n\n**Pong Response:**\n```json\n{\n  \"event\": \"pong\",\n  \"time\": \"1693208170000\"\n}\n```\n\nMaximum 5 missed pongs before connection is closed.\n\n## Authentication (Private Channels)\n\nPrivate channels require header authentication:\n- `ACCESS-KEY`: Your API key\n- `ACCESS-PASSPHRASE`: Your API passphrase\n- `ACCESS-TIMESTAMP`: Unix millisecond timestamp\n- `ACCESS-SIGN`: Base64(HMAC-SHA256(secret, timestamp + '/v2/ws/private'))\n\nSee the WebSocket section below for detailed channel documentation and examples.",
+        "operationId": "websocketDocumentation",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "WebSocket API documentation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "This endpoint serves as documentation. See the WebSocket section for detailed information."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/capi/v2/order/uploadAiLog": {
       "post": {
         "tags": [
@@ -3311,6 +3335,329 @@
             "$ref": "#/components/responses/InternalError"
           }
         }
+      }
+    }
+  },
+  "x-websocket": {
+    "description": "WebSocket API for real-time market data and account updates",
+    "servers": [
+      {
+        "url": "wss://ws-contract.weex.com/v2/ws/public",
+        "description": "Public WebSocket endpoint for market data (no authentication required)"
+      },
+      {
+        "url": "wss://ws-contract.weex.com/v2/ws/private",
+        "description": "Private WebSocket endpoint for account data (authentication required)"
+      }
+    ],
+    "connection": {
+      "limits": {
+        "connections_per_ip": "300 requests per 5 minutes, max 100 concurrent",
+        "subscriptions_per_connection": "240 operations per hour, max 100 channels"
+      },
+      "heartbeat": {
+        "description": "Server sends ping messages periodically. Client must respond with pong to maintain connection.",
+        "ping_format": {
+          "event": "ping",
+          "time": "1693208170000"
+        },
+        "pong_format": {
+          "event": "pong",
+          "time": "1693208170000"
+        },
+        "max_missed_pongs": 5
+      },
+      "authentication": {
+        "description": "Private channels require header authentication",
+        "headers": {
+          "User-Agent": "Client identification",
+          "ACCESS-KEY": "API key",
+          "ACCESS-PASSPHRASE": "API passphrase",
+          "ACCESS-TIMESTAMP": "Unix millisecond timestamp",
+          "ACCESS-SIGN": "Base64(HMAC-SHA256(secret, timestamp + '/v2/ws/private'))"
+        }
+      }
+    },
+    "channels": {
+      "public": {
+        "ticker": {
+          "description": "Real-time market ticker data with latest price, 24h high/low, volume",
+          "channel_format": "ticker.{contractId}",
+          "example_channel": "ticker.cmt_btcusdt",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "ticker.cmt_btcusdt"
+          },
+          "subscribe_response": {
+            "event": "subscribed",
+            "channel": "ticker.cmt_btcusdt"
+          },
+          "payload": {
+            "event": "payload",
+            "channel": "ticker.cmt_btcusdt",
+            "data": [
+              {
+                "symbol": "cmt_btcusdt",
+                "priceChange": "-2055.6",
+                "priceChangePercent": "-0.019637",
+                "trades": "28941",
+                "size": "176145.66489",
+                "value": "18115688543.1",
+                "high": "104692.2",
+                "low": "100709.6",
+                "lastPrice": "102623.9",
+                "markPrice": "102623.9",
+                "indexPrice": "102988.5"
+              }
+            ]
+          },
+          "fields": {
+            "symbol": "Trading pair symbol",
+            "priceChange": "Price change in 24h",
+            "priceChangePercent": "Price change percentage in 24h",
+            "trades": "Number of trades in 24h",
+            "size": "Trading volume (base currency)",
+            "value": "Trading value (quote currency)",
+            "high": "24h high price",
+            "low": "24h low price",
+            "lastPrice": "Latest execution price",
+            "markPrice": "Mark price for liquidation",
+            "indexPrice": "Index price from spot exchanges"
+          }
+        },
+        "depth": {
+          "description": "Order book depth data with configurable levels",
+          "channel_format": "depth.{contractId}.{levels}",
+          "example_channel": "depth.cmt_btcusdt.15",
+          "levels": [
+            5,
+            15,
+            50,
+            200
+          ],
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "depth.cmt_btcusdt.15"
+          },
+          "subscribe_response": {
+            "event": "subscribed",
+            "channel": "depth.cmt_btcusdt.15"
+          },
+          "payload": {
+            "event": "payload",
+            "channel": "depth.cmt_btcusdt.15",
+            "data": [
+              {
+                "startVersion": "3644174246",
+                "endVersion": "3644174270",
+                "level": 15,
+                "depthType": "CHANGED",
+                "symbol": "cmt_btcusdt",
+                "asks": [
+                  {
+                    "price": "103436.1",
+                    "size": "0.91500"
+                  }
+                ],
+                "bids": [
+                  {
+                    "price": "103435.9",
+                    "size": "2.40500"
+                  }
+                ]
+              }
+            ]
+          },
+          "fields": {
+            "depthType": "SNAPSHOT for full book, CHANGED for incremental",
+            "asks": "Array of {price, size} sorted ascending by price",
+            "bids": "Array of {price, size} sorted descending by price"
+          }
+        },
+        "trades": {
+          "description": "Real-time public trades (taker orders)",
+          "channel_format": "trades.{contractId}",
+          "example_channel": "trades.cmt_btcusdt",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "trades.cmt_btcusdt"
+          },
+          "subscribe_response": {
+            "event": "subscribed",
+            "channel": "trades.cmt_btcusdt"
+          },
+          "payload": {
+            "event": "payload",
+            "channel": "trades.cmt_btcusdt",
+            "data": [
+              {
+                "time": "1747131727502",
+                "price": "103337.5",
+                "size": "0.01600",
+                "value": "1653.400000",
+                "buyerMaker": false
+              }
+            ]
+          },
+          "fields": {
+            "time": "Trade timestamp in milliseconds",
+            "price": "Execution price",
+            "size": "Trade size (base currency)",
+            "value": "Trade value (quote currency)",
+            "buyerMaker": "true if buyer was the maker (sell order matched)"
+          }
+        },
+        "kline": {
+          "description": "Candlestick/K-line data",
+          "channel_format": "kline.{priceType}.{contractId}.{interval}",
+          "example_channel": "kline.LAST_PRICE.cmt_btcusdt.MINUTE_1",
+          "price_types": [
+            "LAST_PRICE",
+            "MARK_PRICE",
+            "INDEX_PRICE"
+          ],
+          "intervals": [
+            "MINUTE_1",
+            "MINUTE_5",
+            "MINUTE_15",
+            "MINUTE_30",
+            "HOUR_1",
+            "HOUR_4",
+            "HOUR_12",
+            "DAY_1",
+            "WEEK_1"
+          ],
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "kline.LAST_PRICE.cmt_btcusdt.MINUTE_1"
+          },
+          "subscribe_response": {
+            "event": "subscribed",
+            "channel": "kline.LAST_PRICE.cmt_btcusdt.MINUTE_1"
+          },
+          "payload": {
+            "event": "payload",
+            "type": "change",
+            "channel": "kline.LAST_PRICE.cmt_btcusdt.MINUTE_1",
+            "data": [
+              {
+                "symbol": "cmt_btcusdt",
+                "klineTime": "1747125660000",
+                "size": "23.76600",
+                "value": "2442678.713400",
+                "high": "102784.6",
+                "low": "102760.6",
+                "open": "102760.6",
+                "close": "102764.0"
+              }
+            ]
+          },
+          "fields": {
+            "klineTime": "Candle start timestamp",
+            "open": "Opening price",
+            "high": "Highest price",
+            "low": "Lowest price",
+            "close": "Closing price",
+            "size": "Volume (base currency)",
+            "value": "Value (quote currency)"
+          }
+        }
+      },
+      "private": {
+        "account": {
+          "description": "Account balance updates (requires authentication)",
+          "channel_format": "account",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "account"
+          },
+          "fields": {
+            "coinName": "Asset name (e.g., USDT)",
+            "available": "Available balance",
+            "equity": "Total equity",
+            "frozen": "Frozen balance",
+            "unrealizedPL": "Unrealized profit/loss"
+          }
+        },
+        "positions": {
+          "description": "Position updates (requires authentication)",
+          "channel_format": "positions",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "positions"
+          },
+          "fields": {
+            "symbol": "Trading pair",
+            "holdSide": "Position side (LONG/SHORT)",
+            "total": "Position size",
+            "available": "Available to close",
+            "averageOpenPrice": "Average entry price",
+            "unrealizedPL": "Unrealized PnL",
+            "leverage": "Position leverage"
+          }
+        },
+        "orders": {
+          "description": "Order status updates (requires authentication)",
+          "channel_format": "orders",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "orders"
+          },
+          "fields": {
+            "orderId": "Order ID",
+            "clientOid": "Client order ID",
+            "symbol": "Trading pair",
+            "size": "Order size",
+            "filledQty": "Filled quantity",
+            "price": "Order price",
+            "state": "Order state (new/partially_filled/filled/cancelled)"
+          }
+        },
+        "fills": {
+          "description": "Trade fill notifications (requires authentication)",
+          "channel_format": "fills",
+          "subscribe": {
+            "event": "subscribe",
+            "channel": "fills"
+          },
+          "fields": {
+            "orderId": "Order ID",
+            "tradeId": "Trade ID",
+            "symbol": "Trading pair",
+            "price": "Fill price",
+            "size": "Fill size",
+            "fee": "Trading fee",
+            "feeCoin": "Fee currency"
+          }
+        }
+      }
+    },
+    "message_formats": {
+      "subscribe": {
+        "event": "subscribe",
+        "channel": "channel_name"
+      },
+      "unsubscribe": {
+        "event": "unsubscribe",
+        "channel": "channel_name"
+      },
+      "subscribed": {
+        "event": "subscribed",
+        "channel": "channel_name"
+      },
+      "unsubscribed": {
+        "event": "unsubscribed",
+        "channel": "channel_name"
+      },
+      "error": {
+        "event": "error",
+        "code": "ERROR_CODE",
+        "msg": "Error message"
+      },
+      "payload": {
+        "event": "payload",
+        "channel": "channel_name",
+        "data": []
       }
     }
   }
